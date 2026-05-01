@@ -11,9 +11,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment: open-slider-npm
-    env:
-      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -25,14 +25,9 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
-      - name: Version packages (only when publishing)
-        if: ${{ env.HAS_NPM_TOKEN == 'true' }}
+      - name: Version packages
         run: npx changeset version
-      - name: Publish packages to npm
-        if: ${{ env.HAS_NPM_TOKEN == 'true' }}
+      - name: Publish packages to npm (Trusted Publishing)
         run: npx changeset publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Skip publish (missing NPM_TOKEN)
-        if: ${{ env.HAS_NPM_TOKEN != 'true' }}
-        run: echo "::warning::NPM_TOKEN no está configurado. Se omite la publicación en npm."
+          NPM_CONFIG_PROVENANCE: true
