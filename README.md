@@ -2,6 +2,18 @@
 
 Monorepo de `@open-slider/*` para construir un slider/carrusel open source, gratis y compatible con múltiples frameworks.
 
+## Demo y docs en GitHub Pages
+
+- Workflow: `.github/workflows/pages.yml`
+- Rama de despliegue: `master`
+- URL esperada: `https://<tu-usuario>.github.io/<tu-repo>/`
+
+La página incluye:
+
+- Demo funcional de `carousel`
+- Demo funcional de `range` simple y dual
+- Guía básica de instalación
+
 ## Instalación local
 
 1. Instalar dependencias en la raíz.
@@ -19,7 +31,7 @@ Comandos disponibles:
 - `@open-slider/core`: núcleo agnóstico (`carousel` + `range`).
 - `@open-slider/web-component`: custom element base `open-slider-carousel`.
 - `@open-slider/styles`: tema CSS por defecto + vía unstyled.
-- `@open-slider/{react,vue,svelte,solid,angular,astro,next,nuxt}`: wrappers iniciales (scaffold).
+- `@open-slider/{react,vue,svelte,solid,angular,astro,next,nuxt}`: wrappers reales listos para uso.
 
 ## Ejemplo rápido (core)
 
@@ -42,7 +54,14 @@ console.log(slider.getState().index);
 - ✅ Bootstrap inicial del monorepo
 - ✅ Core inicial (`carousel` + `range`)
 - ✅ Web Component base
-- ✅ Paquetes wrapper base para frameworks
+- ✅ Wrappers React, Vue, Svelte, Solid, Angular, Astro, Next y Nuxt
+
+## Publicar GitHub Pages (1 vez)
+
+1. En GitHub, entra en **Settings → Pages**.
+2. En **Build and deployment**, selecciona **Source: GitHub Actions**.
+3. Haz push a `master` y espera al workflow **Pages**.
+4. Abre la URL publicada en la sección de Pages.
 
 ## Scripts
 
