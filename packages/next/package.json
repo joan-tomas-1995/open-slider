@@ -21,6 +21,11 @@
     "next": ">=14.0.0",
     "react": ">=18.0.0"
   },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@open-slider/core": "0.1.0"
   },
