@@ -105,6 +105,25 @@
         margin-top: 12px;
       }
 
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .theme-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .theme-controls label {
+        display: grid;
+        gap: 4px;
+        font-size: 0.88rem;
+      }
+
       button {
         border: 0;
         border-radius: 10px;
@@ -224,6 +243,49 @@ console.log(slider.getState());</code></pre>
       </section>
 
       <section class="card">
+        <h2>Demos extra</h2>
+        <div class="demo-grid">
+          <div>
+            <h3>Web Component: <code>&lt;open-slider-carousel&gt;</code></h3>
+            <open-slider-carousel id="wc-carousel" loop class="carousel-root">
+              <div class="carousel-track" data-track>
+                <div class="slide" data-slide>A</div>
+                <div class="slide" data-slide>B</div>
+                <div class="slide" data-slide>C</div>
+              </div>
+            </open-slider-carousel>
+            <div class="carousel-controls">
+              <button id="wc-prev">← Prev</button>
+              <button id="wc-next">Next →</button>
+            </div>
+          </div>
+
+          <div>
+            <h3>Theme playground (CSS vars)</h3>
+            <p class="muted">Ajusta colores/tamaño y se aplica al momento:</p>
+            <div class="theme-controls">
+              <label>
+                Track
+                <input id="theme-track" type="color" value="#e2e8f0" />
+              </label>
+              <label>
+                Fill
+                <input id="theme-fill" type="color" value="#2563eb" />
+              </label>
+              <label>
+                Thumb
+                <input id="theme-thumb" type="color" value="#ffffff" />
+              </label>
+              <label>
+                Thumb size
+                <input id="theme-size" type="range" min="12" max="28" value="18" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
         <h2>Paquetes</h2>
         <p>
           <code>@open-slider/core</code>, <code>@open-slider/web-component</code>,
@@ -243,6 +305,9 @@ console.log(slider.getState());</code></pre>
         createSingleRange,
         createDualRange,
       } from './assets/core/index.js';
+      import { defineOpenSliderElements } from './assets/web-component/index.js';
+
+      defineOpenSliderElements();
 
       const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
@@ -346,6 +411,26 @@ console.log(slider.getState());</code></pre>
       attachDualThumb(dualThumbMin, (v) => dual.setMinValue(v));
       attachDualThumb(dualThumbMax, (v) => dual.setMaxValue(v));
       renderDual();
+
+      // Web Component demo
+      const wcCarousel = document.getElementById('wc-carousel');
+      document.getElementById('wc-prev').addEventListener('click', () => wcCarousel.prev());
+      document.getElementById('wc-next').addEventListener('click', () => wcCarousel.next());
+
+      // Theme playground
+      const rootStyle = document.documentElement.style;
+      document.getElementById('theme-track').addEventListener('input', (e) => {
+        rootStyle.setProperty('--os-track-bg', e.target.value);
+      });
+      document.getElementById('theme-fill').addEventListener('input', (e) => {
+        rootStyle.setProperty('--os-fill-bg', e.target.value);
+      });
+      document.getElementById('theme-thumb').addEventListener('input', (e) => {
+        rootStyle.setProperty('--os-thumb-bg', e.target.value);
+      });
+      document.getElementById('theme-size').addEventListener('input', (e) => {
+        rootStyle.setProperty('--os-thumb-size', `${e.target.value}px`);
+      });
     </script>
   </body>
 
