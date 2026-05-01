@@ -1,0 +1,31 @@
+{
+  "name": "@open-slider/next",
+  "version": "0.1.0",
+  "description": "Next.js adapter for Open Slider",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "next": ">=14.0.0",
+    "react": ">=18.0.0"
+  },
+  "dependencies": {
+    "@open-slider/core": "0.1.0"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs --external react --external next",
+    "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+  }
+}

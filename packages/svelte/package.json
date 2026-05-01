@@ -1,0 +1,30 @@
+{
+  "name": "@open-slider/svelte",
+  "version": "0.1.0",
+  "description": "Svelte adapter for Open Slider",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "svelte": ">=4.0.0"
+  },
+  "dependencies": {
+    "@open-slider/core": "0.1.0"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+  }
+}

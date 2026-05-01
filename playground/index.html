@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Slider – Playground</title>
+    <link rel="stylesheet" href="../packages/styles/src/index.css" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 720px;
+        margin: 40px auto;
+        padding: 0 24px;
+        color: #111;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+        margin-top: 40px;
+        margin-bottom: 12px;
+      }
+
+      p.hint {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 6px;
+      }
+
+      /* ── Carousel ── */
+      .carousel-root {
+        overflow: hidden;
+        border-radius: 12px;
+        background: #f3f4f6;
+        position: relative;
+      }
+
+      .carousel-track {
+        display: flex;
+        transition: transform 0.35s cubic-bezier(.4, 0, .2, 1);
+      }
+
+      .slide {
+        min-width: 100%;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .slide:nth-child(1) {
+        background: #2563eb;
+      }
+
+      .slide:nth-child(2) {
+        background: #7c3aed;
+      }
+
+      .slide:nth-child(3) {
+        background: #db2777;
+      }
+
+      .slide:nth-child(4) {
+        background: #d97706;
+      }
+
+      .carousel-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .carousel-controls button {
+        padding: 8px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .carousel-controls button:hover {
+        background: #1d4ed8;
+      }
+
+      #carousel-status {
+        font-size: 0.9rem;
+        color: #444;
+      }
+
+      /* ── Range ── */
+      .range-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .range-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .range-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .os-range-container {
+        position: relative;
+        padding: 12px 0;
+        cursor: pointer;
+      }
+
+      .os-fill-single {
+        left: 0;
+      }
+
+      .os-thumb-wrapper {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .os-dual-fill {
+        position: absolute;
+        height: 100%;
+        background: var(--os-fill-bg);
+        border-radius: inherit;
+      }
+
+      .range-value {
+        font-size: 0.85rem;
+        color: #444;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <h1>Open Slider – Playground</h1>
+    <p>Demos using <code>@open-slider/core</code> (Vanilla JS / ESM).</p>
+
+    <!-- ── Carousel ── -->
+    <h2>Carousel</h2>
+    <div class="carousel-root" id="carousel">
+      <div class="carousel-track" id="carousel-track">
+        <div class="slide" data-slide>Slide 1</div>
+        <div class="slide" data-slide>Slide 2</div>
+        <div class="slide" data-slide>Slide 3</div>
+        <div class="slide" data-slide>Slide 4</div>
+      </div>
+    </div>
+    <div class="carousel-controls">
+      <button id="btn-prev">← Prev</button>
+      <span id="carousel-status"></span>
+      <button id="btn-next">Next →</button>
+    </div>
+    <p class="hint">Loop activo. Pulsa los botones o usa las flechas del teclado.</p>
+
+    <!-- ── Single Range ── -->
+    <h2>Range Slider (single)</h2>
+    <div class="range-demo">
+      <div class="range-wrapper">
+        <span class="range-label">Valor: <span id="single-val">50</span></span>
+        <div class="os-range-container" id="single-range">
+          <div class="os-track">
+            <div class="os-fill os-fill-single" id="single-fill"></div>
+            <div class="os-thumb-wrapper" id="single-thumb-wrap">
+              <div class="os-thumb" id="single-thumb"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Arrastra el thumb. Step = 5.</p>
+
+    <!-- ── Dual Range ── -->
+    <h2>Range Slider (dual)</h2>
+    <div class="range-demo">
+      <div class="range-wrapper">
+        <span class="range-label">
+          Rango: <span id="dual-min-val">20</span> – <span id="dual-max-val">80</span>
+        </span>
+        <div class="os-range-container" id="dual-range">
+          <div class="os-track" id="dual-track">
+            <div class="os-dual-fill" id="dual-fill"></div>
+            <div class="os-thumb-wrapper" id="dual-thumb-min">
+              <div class="os-thumb"></div>
+            </div>
+            <div class="os-thumb-wrapper" id="dual-thumb-max">
+              <div class="os-thumb"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Arrastra cada thumb. Step = 1.</p>
+
+    <script type="module">
+      import {
+        createCarousel,
+        createSingleRange,
+        createDualRange,
+      } from '../packages/core/dist/index.js';
+
+      // ── Carousel ──────────────────────────────────────────────────────────────
+      const carousel = createCarousel({ totalSlides: 4, loop: true });
+      const track = document.getElementById('carousel-track');
+      const status = document.getElementById('carousel-status');
+
+      function renderCarousel() {
+        const { index, totalSlides } = carousel.getState();
+        track.style.transform = `translate3d(${-index * 100}%, 0, 0)`;
+        status.textContent = `${index + 1} / ${totalSlides}`;
+      }
+
+      document.getElementById('btn-next').addEventListener('click', () => {
+        carousel.next(); renderCarousel();
+      });
+      document.getElementById('btn-prev').addEventListener('click', () => {
+        carousel.prev(); renderCarousel();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { carousel.next(); renderCarousel(); }
+        if (e.key === 'ArrowLeft') { carousel.prev(); renderCarousel(); }
+      });
+      renderCarousel();
+
+      // ── Single range ──────────────────────────────────────────────────────────
+      const single = createSingleRange({ min: 0, max: 100, step: 5, initialValue: 50 });
+      const singleContainer = document.getElementById('single-range');
+      const singleFill = document.getElementById('single-fill');
+      const singleThumbWrap = document.getElementById('single-thumb-wrap');
+      const singleValEl = document.getElementById('single-val');
+
+      function renderSingle() {
+        const { value, min, max } = single.getState();
+        const pct = ((value - min) / (max - min)) * 100;
+        singleFill.style.width = `${pct}%`;
+        singleThumbWrap.style.left = `${pct}%`;
+        singleValEl.textContent = String(value);
+      }
+
+      function pointerToValue(e, container, state) {
+        const rect = container.querySelector('.os-track').getBoundingClientRect();
+        const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+        return state.min + ratio * (state.max - state.min);
+      }
+
+      singleContainer.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        const move = (ev) => {
+          single.setValue(pointerToValue(ev, singleContainer, single.getState()));
+          renderSingle();
+        };
+        const up = () => {
+          window.removeEventListener('pointermove', move);
+          window.removeEventListener('pointerup', up);
+        };
+        move(e);
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+      });
+      renderSingle();
+
+      // ── Dual range ────────────────────────────────────────────────────────────
+      const dual = createDualRange({ min: 0, max: 100, step: 1, initialMinValue: 20, initialMaxValue: 80 });
+      const dualContainer = document.getElementById('dual-range');
+      const dualFill = document.getElementById('dual-fill');
+      const dualThumbMin = document.getElementById('dual-thumb-min');
+      const dualThumbMax = document.getElementById('dual-thumb-max');
+      const dualMinEl = document.getElementById('dual-min-val');
+      const dualMaxEl = document.getElementById('dual-max-val');
+
+      function renderDual() {
+        const { minValue, maxValue, min, max } = dual.getState();
+        const pctMin = ((minValue - min) / (max - min)) * 100;
+        const pctMax = ((maxValue - min) / (max - min)) * 100;
+        dualThumbMin.style.left = `${pctMin}%`;
+        dualThumbMax.style.left = `${pctMax}%`;
+        dualFill.style.left = `${pctMin}%`;
+        dualFill.style.width = `${pctMax - pctMin}%`;
+        dualMinEl.textContent = String(minValue);
+        dualMaxEl.textContent = String(maxValue);
+      }
+
+      function attachDualThumb(thumbEl, onMove) {
+        thumbEl.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          thumbEl.setPointerCapture(e.pointerId);
+          const move = (ev) => {
+            const rect = dualContainer.querySelector('.os-track').getBoundingClientRect();
+            const ratio = Math.min(1, Math.max(0, (ev.clientX - rect.left) / rect.width));
+            const { min, max } = dual.getState();
+            onMove(min + ratio * (max - min));
+            renderDual();
+          };
+          const up = () => {
+            thumbEl.removeEventListener('pointermove', move);
+            thumbEl.removeEventListener('pointerup', up);
+          };
+          thumbEl.addEventListener('pointermove', move);
+          thumbEl.addEventListener('pointerup', up);
+        });
+      }
+
+      attachDualThumb(dualThumbMin, (v) => dual.setMinValue(v));
+      attachDualThumb(dualThumbMax, (v) => dual.setMaxValue(v));
+      renderDual();
+    </script>
+  </body>
+
+</html>

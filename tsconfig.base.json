@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@open-slider/core": ["packages/core/src/index.ts"],
+      "@open-slider/web-component": ["packages/web-component/src/index.ts"],
+      "@open-slider/styles": ["packages/styles/src/index.ts"],
+      "@open-slider/react": ["packages/react/src/index.ts"],
+      "@open-slider/vue": ["packages/vue/src/index.ts"],
+      "@open-slider/svelte": ["packages/svelte/src/index.ts"],
+      "@open-slider/solid": ["packages/solid/src/index.ts"],
+      "@open-slider/angular": ["packages/angular/src/index.ts"],
+      "@open-slider/astro": ["packages/astro/src/index.ts"],
+      "@open-slider/next": ["packages/next/src/index.ts"],
+      "@open-slider/nuxt": ["packages/nuxt/src/index.ts"]
+    },
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["ES2020", "DOM"]
+  }
+}

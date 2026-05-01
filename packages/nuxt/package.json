@@ -1,0 +1,31 @@
+{
+  "name": "@open-slider/nuxt",
+  "version": "0.1.0",
+  "description": "Nuxt adapter for Open Slider",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "nuxt": ">=3.0.0",
+    "vue": ">=3.0.0"
+  },
+  "dependencies": {
+    "@open-slider/core": "0.1.0"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs --external vue",
+    "typecheck": "tsc -p ../../tsconfig.json --noEmit"
+  }
+}

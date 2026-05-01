@@ -1,0 +1,32 @@
+:root {
+  --os-track-bg: #e5e7eb;
+  --os-fill-bg: #2563eb;
+  --os-thumb-bg: #ffffff;
+  --os-thumb-border: #1d4ed8;
+  --os-thumb-size: 20px;
+  --os-track-height: 6px;
+  --os-radius: 9999px;
+}
+
+.os-track {
+  position: relative;
+  background: var(--os-track-bg);
+  height: var(--os-track-height);
+  border-radius: var(--os-radius);
+}
+
+.os-fill {
+  position: absolute;
+  height: 100%;
+  background: var(--os-fill-bg);
+  border-radius: inherit;
+}
+
+.os-thumb {
+  width: var(--os-thumb-size);
+  height: var(--os-thumb-size);
+  border-radius: 50%;
+  background: var(--os-thumb-bg);
+  border: 2px solid var(--os-thumb-border);
+  cursor: pointer;
+}
