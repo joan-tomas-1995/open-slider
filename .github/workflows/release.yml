@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,13 +22,13 @@ jobs:
       - run: npm run test
       - run: npm run build
       - name: Version packages (only when publishing)
-        if: ${{ secrets.NPM_TOKEN != '' }}
+        if: ${{ env.HAS_NPM_TOKEN == 'true' }}
         run: npx changeset version
       - name: Publish packages to npm
-        if: ${{ secrets.NPM_TOKEN != '' }}
+        if: ${{ env.HAS_NPM_TOKEN == 'true' }}
         run: npx changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Skip publish (missing NPM_TOKEN)
-        if: ${{ secrets.NPM_TOKEN == '' }}
+        if: ${{ env.HAS_NPM_TOKEN != 'true' }}
         run: echo "::warning::NPM_TOKEN no está configurado. Se omite la publicación en npm."
