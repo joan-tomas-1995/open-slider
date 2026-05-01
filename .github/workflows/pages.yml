@@ -29,11 +29,9 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p site/assets/core
-          mkdir -p site/assets/web-component
           mkdir -p site/assets/styles
           cp docs/index.html site/index.html
           cp packages/core/dist/index.js site/assets/core/index.js
-          cp packages/web-component/dist/index.js site/assets/web-component/index.js
           cp packages/styles/src/index.css site/assets/styles/index.css
 
       - uses: actions/configure-pages@v5

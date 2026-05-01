@@ -305,9 +305,38 @@ console.log(slider.getState());</code></pre>
         createSingleRange,
         createDualRange,
       } from './assets/core/index.js';
-      import { defineOpenSliderElements } from './assets/web-component/index.js';
 
-      defineOpenSliderElements();
+      class OpenSliderCarouselElement extends HTMLElement {
+        controller = createCarousel({ totalSlides: 1 });
+
+        connectedCallback() {
+          const slides = this.querySelectorAll('[data-slide]').length || 1;
+          const loop = this.hasAttribute('loop');
+          this.controller = createCarousel({ totalSlides: slides, loop });
+          this.render();
+        }
+
+        next() {
+          this.controller.next();
+          this.render();
+        }
+
+        prev() {
+          this.controller.prev();
+          this.render();
+        }
+
+        render() {
+          const state = this.controller.getState();
+          const track = this.querySelector('[data-track]');
+          if (!track) return;
+          track.style.transform = `translate3d(${-state.index * 100}%, 0, 0)`;
+        }
+      }
+
+      if (!customElements.get('open-slider-carousel')) {
+        customElements.define('open-slider-carousel', OpenSliderCarouselElement);
+      }
 
       const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
