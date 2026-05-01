@@ -19,7 +19,14 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
-      - run: npx changeset version
-      - run: npx changeset publish
+      - name: Version packages (only when publishing)
+        if: ${{ secrets.NPM_TOKEN != '' }}
+        run: npx changeset version
+      - name: Publish packages to npm
+        if: ${{ secrets.NPM_TOKEN != '' }}
+        run: npx changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Skip publish (missing NPM_TOKEN)
+        if: ${{ secrets.NPM_TOKEN == '' }}
+        run: echo "::warning::NPM_TOKEN no está configurado. Se omite la publicación en npm."
