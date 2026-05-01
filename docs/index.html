@@ -7,21 +7,35 @@
     <title>Open Slider — Docs & Demo</title>
     <link rel="stylesheet" href="./assets/styles/index.css" />
     <style>
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         margin: 0;
         color: #111827;
         background: #f8fafc;
       }
+
       .wrap {
         max-width: 980px;
         margin: 0 auto;
         padding: 28px 20px 48px;
       }
-      h1 { margin: 0 0 8px; }
-      p { line-height: 1.45; }
-      .muted { color: #64748b; }
+
+      h1 {
+        margin: 0 0 8px;
+      }
+
+      p {
+        line-height: 1.45;
+      }
+
+      .muted {
+        color: #64748b;
+      }
+
       .card {
         background: #fff;
         border: 1px solid #e2e8f0;
@@ -29,6 +43,7 @@
         padding: 18px;
         margin-top: 16px;
       }
+
       pre {
         margin: 0;
         border-radius: 10px;
@@ -37,21 +52,25 @@
         padding: 14px;
         overflow-x: auto;
       }
+
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 14px;
       }
+
       .carousel-root {
         overflow: hidden;
         border-radius: 12px;
         background: #f1f5f9;
         border: 1px solid #e2e8f0;
       }
+
       .carousel-track {
         display: flex;
         transition: transform 0.35s cubic-bezier(.4, 0, .2, 1);
       }
+
       .slide {
         min-width: 100%;
         height: 160px;
@@ -62,16 +81,30 @@
         font-weight: 700;
         color: #fff;
       }
-      .slide:nth-child(1) { background: #2563eb; }
-      .slide:nth-child(2) { background: #7c3aed; }
-      .slide:nth-child(3) { background: #db2777; }
-      .slide:nth-child(4) { background: #d97706; }
+
+      .slide:nth-child(1) {
+        background: #2563eb;
+      }
+
+      .slide:nth-child(2) {
+        background: #7c3aed;
+      }
+
+      .slide:nth-child(3) {
+        background: #db2777;
+      }
+
+      .slide:nth-child(4) {
+        background: #d97706;
+      }
+
       .carousel-controls {
         display: flex;
         align-items: center;
         gap: 12px;
         margin-top: 12px;
       }
+
       button {
         border: 0;
         border-radius: 10px;
@@ -80,29 +113,51 @@
         padding: 8px 14px;
         cursor: pointer;
       }
-      button:hover { background: #1d4ed8; }
-      .range-root { position: relative; padding: 10px 0; cursor: pointer; }
-      .os-fill-single { left: 0; }
+
+      button:hover {
+        background: #1d4ed8;
+      }
+
+      .range-root {
+        position: relative;
+        padding: 10px 0;
+        cursor: pointer;
+      }
+
+      .os-fill-single {
+        left: 0;
+      }
+
       .os-thumb-wrapper {
         position: absolute;
         top: 50%;
         transform: translate(-50%, -50%);
       }
+
       .os-dual-fill {
         position: absolute;
         height: 100%;
         background: var(--os-fill-bg);
         border-radius: inherit;
       }
-      code { background: #eef2ff; padding: 2px 6px; border-radius: 6px; }
-      a { color: #1d4ed8; }
+
+      code {
+        background: #eef2ff;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+
+      a {
+        color: #1d4ed8;
+      }
     </style>
   </head>
 
   <body>
     <main class="wrap">
       <h1>Open Slider</h1>
-      <p class="muted">Librería universal de sliders/carousel con soporte para Vanilla JS, React, Vue, Svelte, Solid, Angular, Astro, Next y Nuxt.</p>
+      <p class="muted">Librería universal de sliders/carousel con soporte para Vanilla JS, React, Vue, Svelte, Solid,
+        Angular, Astro, Next y Nuxt.</p>
 
       <section class="card">
         <h2>Instalación rápida</h2>
@@ -156,8 +211,12 @@ console.log(slider.getState());</code></pre>
             <div class="range-root" id="dual-range">
               <div class="os-track">
                 <div class="os-dual-fill" id="dual-fill"></div>
-                <div class="os-thumb-wrapper" id="dual-thumb-min"><div class="os-thumb"></div></div>
-                <div class="os-thumb-wrapper" id="dual-thumb-max"><div class="os-thumb"></div></div>
+                <div class="os-thumb-wrapper" id="dual-thumb-min">
+                  <div class="os-thumb"></div>
+                </div>
+                <div class="os-thumb-wrapper" id="dual-thumb-max">
+                  <div class="os-thumb"></div>
+                </div>
               </div>
             </div>
           </div>
