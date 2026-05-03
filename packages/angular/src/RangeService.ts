@@ -25,12 +25,20 @@ export class RangeService {
   }
 
   setValue(value: number): void {
+    if (!this.singleCtrl) return;
     this.singleState.set(this.singleCtrl.setValue(value));
   }
 
-  setMinValue(v: number): void { this.dualState.set(this.dualCtrl.setMinValue(v)); }
-  setMaxValue(v: number): void { this.dualState.set(this.dualCtrl.setMaxValue(v)); }
+  setMinValue(v: number): void {
+    if (!this.dualCtrl) return;
+    this.dualState.set(this.dualCtrl.setMinValue(v));
+  }
+  setMaxValue(v: number): void {
+    if (!this.dualCtrl) return;
+    this.dualState.set(this.dualCtrl.setMaxValue(v));
+  }
   setValues(min: number, max: number): void {
+    if (!this.dualCtrl) return;
     this.dualState.set(this.dualCtrl.setValues(min, max));
   }
 }
