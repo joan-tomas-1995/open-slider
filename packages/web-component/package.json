@@ -1,6 +1,6 @@
 {
   "name": "@open-slider/web-component",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Web Component implementation for Open Slider",
   "license": "MIT",
   "type": "module",
