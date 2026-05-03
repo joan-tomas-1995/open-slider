@@ -1,6 +1,6 @@
 {
   "name": "@open-slider/solid",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Solid adapter for Open Slider",
   "license": "MIT",
   "type": "module",
@@ -24,7 +24,7 @@
     "solid-js": ">=1.8.0"
   },
   "dependencies": {
-    "@open-slider/core": "0.1.0"
+    "@open-slider/core": "0.2.0"
   },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs --external solid-js",

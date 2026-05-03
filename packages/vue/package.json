@@ -1,6 +1,6 @@
 {
   "name": "@open-slider/vue",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Vue adapter for Open Slider",
   "license": "MIT",
   "type": "module",
@@ -24,7 +24,7 @@
     "vue": ">=3.0.0"
   },
   "dependencies": {
-    "@open-slider/core": "0.1.0"
+    "@open-slider/core": "0.2.0"
   },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs --external vue",
