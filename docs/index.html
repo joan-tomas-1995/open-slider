@@ -358,6 +358,7 @@
 
       /* ── Carousel demo ──────────────────────────────────────── */
       .carousel-root {
+        display: block; /* custom elements are inline by default */
         overflow: hidden;
         border-radius: 10px;
         border: 1px solid var(--border);
@@ -819,7 +820,8 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
 
         <div class="sub-card feature-panel">
           <h3 style="margin:0 0 6px">Features playground</h3>
-          <p class="muted" style="font-size:.82rem;margin:0">Activa o desactiva funcionalidades para ver cómo Open Slider se compone por módulos.</p>
+          <p class="muted" style="font-size:.82rem;margin:0">Activa o desactiva funcionalidades para ver cómo Open
+            Slider se compone por módulos.</p>
           <div class="feature-grid">
             <label class="feature-toggle"><input id="feature-loop" type="checkbox" checked /> Loop</label>
             <label class="feature-toggle"><input id="feature-autoplay" type="checkbox" checked /> Autoplay</label>
