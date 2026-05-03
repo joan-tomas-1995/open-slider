@@ -731,7 +731,9 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
 
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <h3 style="margin:0">Carousel</h3>
-          <span style="font-size:.72rem;padding:3px 10px;border-radius:99px;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);color:#3fb950;font-weight:600;letter-spacing:.04em">⏵ AUTOPLAY</span>
+          <span
+            style="font-size:.72rem;padding:3px 10px;border-radius:99px;background:rgba(63,185,80,.12);border:1px solid rgba(63,185,80,.3);color:#3fb950;font-weight:600;letter-spacing:.04em">⏵
+            AUTOPLAY</span>
         </div>
         <div class="carousel-root" id="carousel" style="position:relative;outline:none;" aria-label="Demo carousel">
           <div class="carousel-track" id="carousel-track">
@@ -741,11 +743,15 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
             <div class="slide" data-slide>Slide 4</div>
           </div>
           <!-- progress bar -->
-          <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.15);border-radius:0 0 10px 10px;overflow:hidden;">
-            <div id="carousel-progress" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .15s;"></div>
+          <div
+            style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.15);border-radius:0 0 10px 10px;overflow:hidden;">
+            <div id="carousel-progress"
+              style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .15s;">
+            </div>
           </div>
         </div>
-        <p class="muted" style="font-size:.78rem;margin:6px 0 10px">Swipe ← → · Arrow keys · Click dots · Hover to pause autoplay</p>
+        <p class="muted" style="font-size:.78rem;margin:6px 0 10px">Swipe ← → · Arrow keys · Click dots · Hover to pause
+          autoplay</p>
         <div class="carousel-controls">
           <button class="ctrl-btn" id="btn-prev">← Prev</button>
           <div class="carousel-dots" id="carousel-dots"></div>
@@ -906,7 +912,7 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
         createAutoplay,
         createTouchHandler,
         createKeyboardHandler,
-      } from './assets/core/index.js';
+      } from './assets/core/index.js?v=2026-05-03-1';
 
       // ── Web Component ───────────────────────────────────────────
       class OpenSliderCarouselElement extends HTMLElement {
