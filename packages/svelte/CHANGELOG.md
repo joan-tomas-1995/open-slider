@@ -1,5 +1,11 @@
 # @open-slider/svelte
 
+## 0.2.1
+
+### Patch Changes
+
+- Republish svelte adapter with a new patch version due registry inconsistency on 0.2.0.
+
 ## 0.2.0
 
 ### Minor Changes
