@@ -41,9 +41,11 @@ export function initA11y(
     slides.forEach((slide, i) => {
       const visible = i >= state.index && i < state.index + state.slidesPerView;
       slide.setAttribute('aria-hidden', String(!visible));
-      slide.setAttribute('inert', visible ? '' : 'true');
+      slide.setAttribute('aria-label', `Slide ${i + 1} of ${state.totalSlides}`);
       if (visible) {
         slide.removeAttribute('inert');
+      } else {
+        slide.setAttribute('inert', '');
       }
     });
   }

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createDualRange } from '@open-slider/core';
 import type { DualRangeState, RangeOptions } from '@open-slider/core';
 
@@ -8,19 +8,19 @@ export function useDualRange(options: RangeOptions = {}) {
     controllerRef.current.getState()
   );
 
-  const setMinValue = useCallback(
-    (v: number) => setState(controllerRef.current.setMinValue(v)),
-    []
-  );
-  const setMaxValue = useCallback(
-    (v: number) => setState(controllerRef.current.setMaxValue(v)),
-    []
-  );
-  const setValues = useCallback(
-    (min: number, max: number) =>
-      setState(controllerRef.current.setValues(min, max)),
-    []
-  );
+  useEffect(() => {
+    return controllerRef.current.subscribe(setState);
+  }, []);
 
-  return { state, setMinValue, setMaxValue, setValues };
+  const setMinValue = useCallback((v: number) => {
+    controllerRef.current.setMinValue(v);
+  }, []);
+  const setMaxValue = useCallback((v: number) => {
+    controllerRef.current.setMaxValue(v);
+  }, []);
+  const setValues = useCallback((min: number, max: number) => {
+    controllerRef.current.setValues(min, max);
+  }, []);
+
+  return { state, setMinValue, setMaxValue, setValues, controller: controllerRef.current };
 }

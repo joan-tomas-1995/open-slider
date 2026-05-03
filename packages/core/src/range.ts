@@ -1,9 +1,11 @@
-import type { DualRangeState, RangeOptions, RangeState, SingleRangeState } from './types';
+import type { DualRangeState, RangeListener, RangeOptions, RangeState, SingleRangeState } from './types';
 import { clamp, snapToStep } from './utils';
 
 export interface SingleRangeController {
   setValue(value: number): SingleRangeState;
   getState(): SingleRangeState;
+  /** Subscribe to state changes. Returns an unsubscribe function. */
+  subscribe(listener: RangeListener<SingleRangeState>): () => void;
 }
 
 export interface DualRangeController {
@@ -11,6 +13,8 @@ export interface DualRangeController {
   setMaxValue(value: number): DualRangeState;
   setValues(minValue: number, maxValue: number): DualRangeState;
   getState(): DualRangeState;
+  /** Subscribe to state changes. Returns an unsubscribe function. */
+  subscribe(listener: RangeListener<DualRangeState>): () => void;
 }
 
 export function createSingleRange(options: RangeOptions = {}): SingleRangeController {
@@ -20,16 +24,25 @@ export function createSingleRange(options: RangeOptions = {}): SingleRangeContro
   const onChange = options.onChange;
   let value = clamp(options.initialValue ?? min, min, max);
   value = clamp(snapToStep(value, step, min), min, max);
+  const listeners = new Set<RangeListener<SingleRangeState>>();
+
+  function emit(state: SingleRangeState) {
+    onChange?.(state);
+    listeners.forEach((fn) => fn(state));
+    return state;
+  }
 
   return {
     setValue(nextValue: number) {
       value = clamp(snapToStep(nextValue, step, min), min, max);
-      const state: SingleRangeState = { mode: 'single', min, max, step, value };
-      onChange?.(state);
-      return state;
+      return emit({ mode: 'single', min, max, step, value });
     },
     getState() {
       return { mode: 'single', min, max, step, value };
+    },
+    subscribe(listener: RangeListener<SingleRangeState>) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
     }
   };
 }
@@ -50,6 +63,8 @@ export function createDualRange(options: RangeOptions = {}): DualRangeController
     [minValue, maxValue] = [maxValue, minValue];
   }
 
+  const listeners = new Set<RangeListener<DualRangeState>>();
+
   const buildState = (): DualRangeState => ({
     mode: 'dual',
     min,
@@ -59,30 +74,34 @@ export function createDualRange(options: RangeOptions = {}): DualRangeController
     maxValue
   });
 
+  function emit(state: DualRangeState) {
+    onChange?.(state);
+    listeners.forEach((fn) => fn(state));
+    return state;
+  }
+
   return {
     setMinValue(value: number) {
       minValue = clamp(snapToStep(value, step, min), min, maxValue);
-      const state = buildState();
-      onChange?.(state);
-      return state;
+      return emit(buildState());
     },
     setMaxValue(value: number) {
       maxValue = clamp(snapToStep(value, step, min), minValue, max);
-      const state = buildState();
-      onChange?.(state);
-      return state;
+      return emit(buildState());
     },
     setValues(nextMinValue: number, nextMaxValue: number) {
       const nMin = clamp(snapToStep(nextMinValue, step, min), min, max);
       const nMax = clamp(snapToStep(nextMaxValue, step, min), min, max);
       minValue = Math.min(nMin, nMax);
       maxValue = Math.max(nMin, nMax);
-      const state = buildState();
-      onChange?.(state);
-      return state;
+      return emit(buildState());
     },
     getState() {
       return buildState();
+    },
+    subscribe(listener: RangeListener<DualRangeState>) {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
     }
   };
 }

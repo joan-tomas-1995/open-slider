@@ -358,7 +358,8 @@
 
       /* ── Carousel demo ──────────────────────────────────────── */
       .carousel-root {
-        display: block; /* custom elements are inline by default */
+        display: block;
+        /* custom elements are inline by default */
         overflow: hidden;
         border-radius: 10px;
         border: 1px solid var(--border);
@@ -936,6 +937,69 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
         </div>
       </section>
 
+      <!-- Vertical + Pagination demo -->
+      <section class="card">
+        <h2>Vertical carousel + Pagination</h2>
+        <div class="grid-2">
+
+          <!-- Vertical -->
+          <div class="sub-card">
+            <h3>direction: 'vertical'</h3>
+            <p class="muted" style="font-size:.82rem;margin:0 0 12px">Touch swipe vertical, keyboard ↑↓</p>
+            <div id="vert-carousel" class="carousel-root" style="height:180px;overflow:hidden;border-radius:8px;">
+              <div id="vert-track"
+                style="display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.4,0,.2,1);will-change:transform;">
+                <div class="slide" data-slide style="height:180px;flex-shrink:0;">Slide 1</div>
+                <div class="slide" data-slide style="height:180px;flex-shrink:0;">Slide 2</div>
+                <div class="slide" data-slide style="height:180px;flex-shrink:0;">Slide 3</div>
+                <div class="slide" data-slide style="height:180px;flex-shrink:0;">Slide 4</div>
+              </div>
+            </div>
+            <div class="carousel-controls" style="margin-top:12px;justify-content:center;gap:8px;">
+              <button class="ctrl-btn" id="vert-prev">↑ Prev</button>
+              <div id="vert-fraction" style="font-size:.9rem;color:var(--fg-muted);min-width:40px;text-align:center;">
+              </div>
+              <button class="ctrl-btn" id="vert-next">Next ↓</button>
+            </div>
+          </div>
+
+          <!-- Pagination types -->
+          <div class="sub-card">
+            <h3>createPagination types</h3>
+            <p class="muted" style="font-size:.82rem;margin:0 0 12px">bullets / fraction / progressbar</p>
+            <div id="pg-carousel" class="carousel-root" style="overflow:hidden;border-radius:8px;">
+              <div id="pg-track" class="carousel-track">
+                <div class="slide" data-slide>Alpha</div>
+                <div class="slide" data-slide>Beta</div>
+                <div class="slide" data-slide>Gamma</div>
+                <div class="slide" data-slide>Delta</div>
+                <div class="slide" data-slide>Epsilon</div>
+              </div>
+            </div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <p class="muted" style="font-size:.75rem;margin:0 0 4px;">Bullets</p>
+                <div id="pg-bullets" style="display:flex;gap:6px;"></div>
+              </div>
+              <div>
+                <p class="muted" style="font-size:.75rem;margin:0 0 4px;">Fraction</p>
+                <div id="pg-fraction" style="font-size:.9rem;color:var(--fg-muted);"></div>
+              </div>
+              <div>
+                <p class="muted" style="font-size:.75rem;margin:0 0 4px;">Progress bar</p>
+                <div id="pg-progressbar" style="height:4px;border-radius:2px;background:var(--border);overflow:hidden;">
+                </div>
+              </div>
+            </div>
+            <div class="carousel-controls" style="margin-top:12px;">
+              <button class="ctrl-btn" id="pg-prev">← Prev</button>
+              <button class="ctrl-btn" id="pg-next">Next →</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- Packages -->
       <section class="card">
         <h2>Packages</h2>
@@ -1004,8 +1068,9 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
         createAutoplay,
         createTouchHandler,
         createKeyboardHandler,
+        createPagination,
         initA11y,
-      } from './assets/core/index.js?v=2026-05-03-1';
+      } from './assets/core/index.js?v=2026-05-04-1';
 
       // ── Web Component ───────────────────────────────────────────
       class OpenSliderCarouselElement extends HTMLElement {
@@ -1418,6 +1483,73 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
       document.getElementById('theme-size').addEventListener('input', (e) => {
         rootStyle.setProperty('--os-thumb-size', `${e.target.value}px`);
       });
+
+      // ── Vertical carousel ──────────────────────────────────────────
+      const vertEl = document.getElementById('vert-carousel');
+      const vertTrack = document.getElementById('vert-track');
+      const vertFraction = document.getElementById('vert-fraction');
+      const vertSlides = vertTrack.querySelectorAll('[data-slide]');
+      const SLIDE_HEIGHT = 180;
+
+      const vertCarousel = createCarousel({
+        totalSlides: vertSlides.length,
+        direction: 'vertical',
+        loop: true,
+      });
+
+      function renderVert(state) {
+        vertTrack.style.transform = `translate3d(0, ${-state.index * SLIDE_HEIGHT}px, 0)`;
+        vertFraction.textContent = `${state.index + 1} / ${state.totalSlides}`;
+      }
+
+      vertCarousel.subscribe(renderVert);
+      renderVert(vertCarousel.getState());
+
+      createTouchHandler(vertEl, vertCarousel);
+      vertEl.setAttribute('tabindex', '0');
+      createKeyboardHandler(vertEl, vertCarousel);
+
+      document.getElementById('vert-prev').addEventListener('click', () => vertCarousel.prev());
+      document.getElementById('vert-next').addEventListener('click', () => vertCarousel.next());
+
+      // ── Pagination demo ────────────────────────────────────────────
+      const pgEl = document.getElementById('pg-carousel');
+      const pgTrack = document.getElementById('pg-track');
+      const pgSlides = Array.from(pgTrack.querySelectorAll('.slide'));
+
+      const pgCarousel = createCarousel({ totalSlides: pgSlides.length });
+
+      function renderPg(state) {
+        const width = pgEl.getBoundingClientRect().width;
+        pgTrack.style.transform = `translate3d(${-state.index * width}px, 0, 0)`;
+        pgSlides.forEach((s) => { s.style.minWidth = `${width}px`; s.style.maxWidth = `${width}px`; });
+      }
+
+      pgCarousel.subscribe(renderPg);
+      renderPg(pgCarousel.getState());
+      window.addEventListener('resize', () => renderPg(pgCarousel.getState()));
+
+      // Bullets — inject style once
+      const pgStyle = document.createElement('style');
+      pgStyle.textContent = `
+        #pg-bullets button { width:8px;height:8px;border-radius:50%;border:none;
+          background:var(--border);cursor:pointer;padding:0;transition:background .2s,transform .2s; }
+        #pg-bullets button.pg-active { background:var(--accent);transform:scale(1.4); }
+      `;
+      document.head.appendChild(pgStyle);
+
+      createPagination(pgCarousel, document.getElementById('pg-bullets'), { activeClass: 'pg-active' });
+      createPagination(pgCarousel, document.getElementById('pg-fraction'), { type: 'fraction' });
+
+      // Progress bar — use the progressbar type directly
+      const pgProgressEl = document.getElementById('pg-progressbar');
+      createPagination(pgCarousel, pgProgressEl, { type: 'progressbar' });
+      // style the fill div appended by createPagination
+      pgProgressEl.querySelector('div').style.cssText =
+        'height:100%;background:var(--accent);transition:width .35s;';
+
+      document.getElementById('pg-prev').addEventListener('click', () => pgCarousel.prev());
+      document.getElementById('pg-next').addEventListener('click', () => pgCarousel.next());
     </script>
   </body>
 

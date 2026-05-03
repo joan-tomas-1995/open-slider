@@ -42,16 +42,17 @@ export function createAutoplay(
   let running = false;
   let manuallyPaused = false;
   let isAutoTick = false;
+  let unsubscribeInteraction: (() => void) | null = null;
 
-  // Intercept manual navigation (not triggered by autoplay itself)
+  // Detect manual navigation via subscribe (no mutation of controller methods)
   if (pauseOnInteraction) {
-    const origNext = controller.next.bind(controller);
-    const origPrev = controller.prev.bind(controller);
-    const origGoTo = controller.goTo.bind(controller);
-
-    controller.next = (...args) => { if (!isAutoTick) pause(); return origNext(...args); };
-    controller.prev = (...args) => { if (!isAutoTick) pause(); return origPrev(...args); };
-    controller.goTo = (...args) => { if (!isAutoTick) pause(); return origGoTo(...args); };
+    let prevIndex = controller.getState().index;
+    unsubscribeInteraction = controller.subscribe((state) => {
+      if (!isAutoTick && state.index !== prevIndex) {
+        pause();
+      }
+      prevIndex = state.index;
+    });
   }
 
   function tick() {
@@ -109,6 +110,8 @@ export function createAutoplay(
     destroy() {
       stopTimer();
       running = false;
+      unsubscribeInteraction?.();
+      unsubscribeInteraction = null;
       if (element) {
         element.removeEventListener('mouseenter', onMouseEnter);
         element.removeEventListener('mouseleave', onMouseLeave);

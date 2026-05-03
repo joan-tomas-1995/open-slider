@@ -3,6 +3,8 @@ export type SliderDirection = 'horizontal' | 'vertical';
 
 /** Listener called whenever carousel state changes */
 export type CarouselListener = (state: CarouselState) => void;
+/** Listener called whenever a range state changes */
+export type RangeListener<S extends RangeState = RangeState> = (state: S) => void;
 export interface CarouselOptions {
   totalSlides: number;
   initialIndex?: number;
@@ -11,6 +13,8 @@ export interface CarouselOptions {
   slidesPerView?: number;
   /** Gap between slides in px (informational — apply via CSS) */
   spaceBetween?: number;
+  /** Slide axis. Default: 'horizontal' */
+  direction?: SliderAxis;
 }
 
 export interface CarouselState {
@@ -20,6 +24,8 @@ export interface CarouselState {
   canPrev: boolean;
   slidesPerView: number;
   spaceBetween: number;
+  /** Slide axis */
+  direction: SliderAxis;
   /** 0..1 progress through the slide list */
   progress: number;
 }
@@ -53,3 +59,6 @@ export interface DualRangeState {
 }
 
 export type RangeState = SingleRangeState | DualRangeState;
+
+/** Options for direction support in carousel + touch */
+export type SliderAxis = 'horizontal' | 'vertical';

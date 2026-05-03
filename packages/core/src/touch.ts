@@ -26,7 +26,12 @@ export function createTouchHandler(
   options: TouchOptions = {}
 ): TouchHandler {
   const threshold = options.threshold ?? 50;
-  const axis = options.axis ?? 'horizontal';
+  // Prefer explicit axis option; fall back to carousel direction if available
+  const axis = options.axis ?? (controller.getState().direction ?? 'horizontal');
+
+  // Allow the browser to handle the perpendicular axis natively
+  const prevTouchAction = element.style.touchAction;
+  element.style.touchAction = axis === 'horizontal' ? 'pan-y' : 'pan-x';
 
   let startX = 0;
   let startY = 0;
@@ -70,6 +75,7 @@ export function createTouchHandler(
 
   return {
     destroy() {
+      element.style.touchAction = prevTouchAction;
       element.removeEventListener('pointerdown', onPointerDown);
       element.removeEventListener('pointerup', onPointerUp);
       element.removeEventListener('pointercancel', onPointerCancel);

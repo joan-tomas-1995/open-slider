@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createSingleRange } from '@open-slider/core';
 import type { RangeOptions, SingleRangeState } from '@open-slider/core';
 
@@ -8,10 +8,13 @@ export function useRange(options: RangeOptions = {}) {
     controllerRef.current.getState()
   );
 
-  const setValue = useCallback(
-    (value: number) => setState(controllerRef.current.setValue(value)),
-    []
-  );
+  useEffect(() => {
+    return controllerRef.current.subscribe(setState);
+  }, []);
 
-  return { state, setValue };
+  const setValue = useCallback((value: number) => {
+    controllerRef.current.setValue(value);
+  }, []);
+
+  return { state, setValue, controller: controllerRef.current };
 }

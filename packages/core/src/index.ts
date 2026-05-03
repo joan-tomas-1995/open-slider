@@ -6,3 +6,4 @@ export * from './autoplay';
 export * from './touch';
 export * from './keyboard';
 export * from './a11y';
+export * from './pagination';

@@ -19,15 +19,15 @@ export function useCarousel(options: CarouselOptions) {
   }, []);
 
   const next = useCallback(() => {
-    setState(controllerRef.current!.next());
+    controllerRef.current!.next();
   }, []);
 
   const prev = useCallback(() => {
-    setState(controllerRef.current!.prev());
+    controllerRef.current!.prev();
   }, []);
 
   const goTo = useCallback((index: number) => {
-    setState(controllerRef.current!.goTo(index));
+    controllerRef.current!.goTo(index);
   }, []);
 
   return { state, next, prev, goTo, controller: controllerRef.current };

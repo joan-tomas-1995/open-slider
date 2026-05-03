@@ -43,6 +43,47 @@ slider.next();
 console.log(slider.getState().index);
 ```
 
+## Novedades del core (documentadas en la demo web)
+
+Además del `carousel` base, `@open-slider/core` incluye:
+
+- `subscribe(listener)`: patrón reactivo para escuchar cambios de estado.
+- `slidesPerView` y `spaceBetween`: control de slides visibles y separación.
+- `state.progress` (`0..1`): progreso normalizado del carrusel.
+- `createAutoplay(...)`: autoplay con `interval`, `pauseOnHover` y `pauseOnInteraction`.
+- `createTouchHandler(...)`: swipe/drag con Pointer Events.
+- `createKeyboardHandler(...)`: navegación por teclado (`←`, `→`, `Home`, `End`).
+- `initA11y(...)`: roles/atributos ARIA para accesibilidad.
+- `range.onChange`: callback directo en cambios de `single` y `dual range`.
+
+Ejemplo corto:
+
+```ts
+import {
+	createCarousel,
+	createAutoplay,
+	createTouchHandler,
+	createKeyboardHandler,
+} from '@open-slider/core';
+
+const root = document.getElementById('carousel')!;
+const carousel = createCarousel({
+	totalSlides: 6,
+	loop: true,
+	slidesPerView: 2,
+	spaceBetween: 12,
+});
+
+carousel.subscribe((state) => {
+	// state.progress -> 0..1
+	console.log(state.index, state.progress);
+});
+
+createAutoplay(carousel, root, { interval: 3500, pauseOnHover: true }).start();
+createTouchHandler(root, carousel);
+createKeyboardHandler(root, carousel);
+```
+
 ## Publicación
 
 - Versionado: Changesets (`.changeset/config.json`).

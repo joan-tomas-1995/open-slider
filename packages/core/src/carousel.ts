@@ -4,6 +4,8 @@ export interface CarouselController {
   next(): CarouselState;
   prev(): CarouselState;
   goTo(index: number): CarouselState;
+  /** Reset to initialIndex (or 0 if not set). */
+  reset(): CarouselState;
   getState(): CarouselState;
   /**
    * Subscribe to state changes. Returns an unsubscribe function.
@@ -20,7 +22,8 @@ function computeState(
   totalSlides: number,
   loop: boolean,
   slidesPerView: number,
-  spaceBetween: number
+  spaceBetween: number,
+  direction: 'horizontal' | 'vertical'
 ): CarouselState {
   const maxIndex = Math.max(0, totalSlides - slidesPerView);
   const progress = maxIndex > 0 ? index / maxIndex : 0;
@@ -29,6 +32,7 @@ function computeState(
     totalSlides,
     slidesPerView,
     spaceBetween,
+    direction,
     progress,
     canNext: loop || index < maxIndex,
     canPrev: loop || index > 0
@@ -40,6 +44,7 @@ export function createCarousel(options: CarouselOptions): CarouselController {
   const loop = options.loop ?? false;
   const slidesPerView = Math.max(1, options.slidesPerView ?? 1);
   const spaceBetween = options.spaceBetween ?? 0;
+  const direction = options.direction ?? 'horizontal';
   let index = Math.min(Math.max(options.initialIndex ?? 0, 0), totalSlides - 1);
   const listeners = new Set<CarouselListener>();
 
@@ -56,7 +61,7 @@ export function createCarousel(options: CarouselOptions): CarouselController {
       } else if (loop) {
         index = 0;
       }
-      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween));
+      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween, direction));
     },
     prev() {
       const maxIndex = Math.max(0, totalSlides - slidesPerView);
@@ -65,7 +70,7 @@ export function createCarousel(options: CarouselOptions): CarouselController {
       } else if (loop) {
         index = maxIndex;
       }
-      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween));
+      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween, direction));
     },
     goTo(nextIndex: number) {
       const maxIndex = Math.max(0, totalSlides - slidesPerView);
@@ -75,10 +80,15 @@ export function createCarousel(options: CarouselOptions): CarouselController {
       } else {
         index = Math.min(Math.max(nextIndex, 0), maxIndex);
       }
-      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween));
+      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween, direction));
+    },
+    reset() {
+      const maxIndex = Math.max(0, totalSlides - slidesPerView);
+      index = Math.min(Math.max(options.initialIndex ?? 0, 0), maxIndex);
+      return emit(computeState(index, totalSlides, loop, slidesPerView, spaceBetween, direction));
     },
     getState() {
-      return computeState(index, totalSlides, loop, slidesPerView, spaceBetween);
+      return computeState(index, totalSlides, loop, slidesPerView, spaceBetween, direction);
     },
     subscribe(listener: CarouselListener) {
       listeners.add(listener);
