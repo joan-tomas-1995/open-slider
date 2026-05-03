@@ -17,6 +17,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "svelte": ">=4.0.0"
   },

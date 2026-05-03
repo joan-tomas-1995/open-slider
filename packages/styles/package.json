@@ -19,6 +19,9 @@
     "dist",
     "src/index.css"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs",
     "typecheck": "tsc -p ../../tsconfig.json --noEmit"

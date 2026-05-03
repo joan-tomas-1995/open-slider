@@ -17,6 +17,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "nuxt": ">=3.0.0",
     "vue": ">=3.0.0"
