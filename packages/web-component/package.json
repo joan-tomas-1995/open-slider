@@ -1,6 +1,6 @@
 {
   "name": "@open-slider/web-component",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Web Component implementation for Open Slider",
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@open-slider/core": "0.1.0"
+    "@open-slider/core": "0.2.0"
   },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs",

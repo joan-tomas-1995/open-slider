@@ -1,6 +1,6 @@
 {
   "name": "@open-slider/next",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Next.js adapter for Open Slider",
   "license": "MIT",
   "type": "module",
@@ -30,7 +30,7 @@
     }
   },
   "dependencies": {
-    "@open-slider/core": "0.1.0"
+    "@open-slider/core": "0.2.0"
   },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm,cjs --external react --external next",
