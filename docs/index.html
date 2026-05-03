@@ -527,6 +527,65 @@
         width: 100%;
       }
 
+      /* ── Feature toggles demo ─────────────────────────────── */
+      .feature-panel {
+        margin-top: 16px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .feature-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, .02);
+        font-size: .82rem;
+        color: var(--text2);
+        font-weight: 600;
+      }
+
+      .feature-toggle input,
+      .feature-toggle select {
+        accent-color: var(--accent);
+      }
+
+      .feature-toggle select,
+      .feature-toggle input[type="range"] {
+        width: 100%;
+      }
+
+      .feature-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .feature-pill {
+        font-size: .72rem;
+        padding: 3px 10px;
+        border-radius: 99px;
+        border: 1px solid var(--border);
+        color: var(--text2);
+        background: var(--bg2);
+        font-weight: 600;
+      }
+
+      .feature-pill.active {
+        color: #b4f1be;
+        border-color: rgba(63, 185, 80, .45);
+        background: rgba(63, 185, 80, .15);
+      }
+
       /* ── Packages grid ──────────────────────────────────────── */
       .pkg-grid {
         display: grid;
@@ -758,6 +817,31 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
           <button class="ctrl-btn" id="btn-next">Next →</button>
         </div>
 
+        <div class="sub-card feature-panel">
+          <h3 style="margin:0 0 6px">Features playground</h3>
+          <p class="muted" style="font-size:.82rem;margin:0">Activa o desactiva funcionalidades para ver cómo Open Slider se compone por módulos.</p>
+          <div class="feature-grid">
+            <label class="feature-toggle"><input id="feature-loop" type="checkbox" checked /> Loop</label>
+            <label class="feature-toggle"><input id="feature-autoplay" type="checkbox" checked /> Autoplay</label>
+            <label class="feature-toggle"><input id="feature-touch" type="checkbox" checked /> Touch / Swipe</label>
+            <label class="feature-toggle"><input id="feature-keyboard" type="checkbox" checked /> Keyboard</label>
+            <label class="feature-toggle"><input id="feature-a11y" type="checkbox" checked /> A11y (ARIA)</label>
+            <label class="feature-toggle"><input id="feature-progress" type="checkbox" checked /> Progress bar</label>
+            <label class="feature-toggle" style="display:block">
+              <span>slidesPerView</span>
+              <select id="feature-spv">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+              </select>
+            </label>
+            <label class="feature-toggle" style="display:block">
+              <span>spaceBetween: <strong id="feature-space-val">0px</strong></span>
+              <input id="feature-space" type="range" min="0" max="24" value="0" />
+            </label>
+          </div>
+          <div class="feature-status" id="feature-status"></div>
+        </div>
+
         <div class="grid-2">
           <div>
             <h3>Range — single</h3>
@@ -816,6 +900,12 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
               <button class="ctrl-btn" id="wc-prev">← Prev</button>
               <div class="carousel-dots" id="wc-dots"></div>
               <button class="ctrl-btn" id="wc-next">Next →</button>
+            </div>
+            <div class="feature-grid" style="margin-top:10px;">
+              <label class="feature-toggle"><input id="wc-feature-loop" type="checkbox" checked /> Loop</label>
+              <label class="feature-toggle"><input id="wc-feature-touch" type="checkbox" checked /> Touch</label>
+              <label class="feature-toggle"><input id="wc-feature-keyboard" type="checkbox" checked /> Keyboard</label>
+              <label class="feature-toggle"><input id="wc-feature-autoplay" type="checkbox" /> Autoplay</label>
             </div>
           </div>
 
@@ -912,6 +1002,7 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
         createAutoplay,
         createTouchHandler,
         createKeyboardHandler,
+        initA11y,
       } from './assets/core/index.js?v=2026-05-03-1';
 
       // ── Web Component ───────────────────────────────────────────
@@ -923,6 +1014,18 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
           const loop = this.hasAttribute('loop');
           this.controller = createCarousel({ totalSlides: slides, loop });
           this.render();
+          this.dispatchEvent(new CustomEvent('open-slider:ready'));
+        }
+
+        setLoop(enabled) {
+          if (enabled) this.setAttribute('loop', '');
+          else this.removeAttribute('loop');
+          const slides = this.querySelectorAll('[data-slide]').length || 1;
+          const current = this.controller?.getState?.().index ?? 0;
+          this.controller = createCarousel({ totalSlides: slides, loop: enabled });
+          this.controller.goTo(Math.min(current, slides - 1));
+          this.render();
+          this.dispatchEvent(new CustomEvent('open-slider:ready'));
         }
 
         next() { this.controller.next(); this.render(); }
@@ -969,41 +1072,175 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
       const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
       // ── Main carousel ───────────────────────────────────────────
-      // ── Main carousel ───────────────────────────────────────────
       const carouselEl = document.getElementById('carousel');
-      const carousel = createCarousel({ totalSlides: 4, loop: true });
       const track = document.getElementById('carousel-track');
       const progressBar = document.getElementById('carousel-progress');
+      const slides = Array.from(track.querySelectorAll('.slide'));
+      const featureStatusEl = document.getElementById('feature-status');
 
-      const updateDots = buildDots('carousel-dots', 4, () => carousel.getState().index, (i) => {
+      const featureLoop = document.getElementById('feature-loop');
+      const featureAutoplay = document.getElementById('feature-autoplay');
+      const featureTouch = document.getElementById('feature-touch');
+      const featureKeyboard = document.getElementById('feature-keyboard');
+      const featureA11y = document.getElementById('feature-a11y');
+      const featureProgress = document.getElementById('feature-progress');
+      const featureSpv = document.getElementById('feature-spv');
+      const featureSpace = document.getElementById('feature-space');
+      const featureSpaceVal = document.getElementById('feature-space-val');
+
+      const featureSettings = {
+        loop: true,
+        autoplay: true,
+        touch: true,
+        keyboard: true,
+        a11y: true,
+        progress: true,
+        slidesPerView: 1,
+        spaceBetween: 0,
+      };
+
+      let carousel = createCarousel({ totalSlides: slides.length, loop: true });
+      let mainState = carousel.getState();
+      let unsubscribeMain = () => { };
+      let destroyMainTouch = () => { };
+      let destroyMainKeyboard = () => { };
+      let mainAutoplay = null;
+      let updateMainA11y = () => { };
+
+      const updateDots = buildDots('carousel-dots', slides.length, () => carousel.getState().index, (i) => {
         carousel.goTo(i);
       });
 
-      // subscribe() drives ALL re-renders
-      carousel.subscribe((state) => {
-        track.style.transform = `translate3d(${-state.index * 100}%, 0, 0)`;
+      function clearA11yForMain() {
+        carouselEl.removeAttribute('role');
+        carouselEl.removeAttribute('aria-label');
+        carouselEl.removeAttribute('aria-roledescription');
+        slides.forEach((slide) => {
+          slide.removeAttribute('role');
+          slide.removeAttribute('aria-roledescription');
+          slide.removeAttribute('aria-label');
+          slide.removeAttribute('aria-hidden');
+          slide.removeAttribute('inert');
+        });
+      }
+
+      function renderFeatureStatus(state) {
+        const items = [
+          ['Loop', featureSettings.loop],
+          ['Autoplay', featureSettings.autoplay],
+          ['Touch', featureSettings.touch],
+          ['Keyboard', featureSettings.keyboard],
+          ['A11y', featureSettings.a11y],
+          ['Progress', featureSettings.progress],
+          [`slidesPerView=${state.slidesPerView}`, true],
+          [`spaceBetween=${state.spaceBetween}px`, true],
+        ];
+        featureStatusEl.innerHTML = items
+          .map(([label, active]) => `<span class="feature-pill${active ? ' active' : ''}">${label}</span>`)
+          .join('');
+      }
+
+      function renderMainCarousel(state) {
+        mainState = state;
+        const width = carouselEl.getBoundingClientRect().width;
+        const slideWidth = (width - (state.slidesPerView - 1) * state.spaceBetween) / state.slidesPerView;
+        const step = slideWidth + state.spaceBetween;
+        track.style.gap = `${state.spaceBetween}px`;
+        slides.forEach((slide) => {
+          slide.style.minWidth = `${slideWidth}px`;
+          slide.style.maxWidth = `${slideWidth}px`;
+        });
+        track.style.transform = `translate3d(${-state.index * step}px, 0, 0)`;
         updateDots(state.index);
-        if (progressBar) progressBar.style.width = `${state.progress * 100}%`;
-      });
+        progressBar.style.display = featureSettings.progress ? 'block' : 'none';
+        if (featureSettings.progress) {
+          progressBar.style.width = `${state.progress * 100}%`;
+        }
+        if (featureSettings.a11y) {
+          updateMainA11y(state);
+        }
+        renderFeatureStatus(state);
+      }
 
-      // Autoplay — pauses on hover automatically
-      const autoplay = createAutoplay(carousel, carouselEl, { interval: 3500, pauseOnHover: true });
-      autoplay.start();
+      function destroyMainEnhancers() {
+        unsubscribeMain();
+        unsubscribeMain = () => { };
+        destroyMainTouch();
+        destroyMainTouch = () => { };
+        destroyMainKeyboard();
+        destroyMainKeyboard = () => { };
+        mainAutoplay?.destroy?.();
+        mainAutoplay = null;
+      }
 
-      // Touch/swipe support
-      createTouchHandler(carouselEl, carousel);
+      function setupMainCarousel() {
+        const prevIndex = mainState?.index ?? 0;
+        destroyMainEnhancers();
 
-      // Keyboard navigation (← →)
-      carouselEl.setAttribute('tabindex', '0');
-      createKeyboardHandler(carouselEl, carousel);
+        carousel = createCarousel({
+          totalSlides: slides.length,
+          loop: featureSettings.loop,
+          slidesPerView: featureSettings.slidesPerView,
+          spaceBetween: featureSettings.spaceBetween,
+          initialIndex: Math.min(prevIndex, Math.max(0, slides.length - featureSettings.slidesPerView)),
+        });
+
+        if (featureSettings.a11y) {
+          const { updateA11y } = initA11y(carouselEl, carousel.getState(), { label: 'Main demo carousel' });
+          updateMainA11y = updateA11y;
+        } else {
+          updateMainA11y = () => { };
+          clearA11yForMain();
+        }
+
+        if (featureSettings.touch) {
+          const touch = createTouchHandler(carouselEl, carousel);
+          destroyMainTouch = () => touch.destroy();
+        }
+
+        if (featureSettings.keyboard) {
+          carouselEl.setAttribute('tabindex', '0');
+          const keyboard = createKeyboardHandler(carouselEl, carousel);
+          destroyMainKeyboard = () => keyboard.destroy();
+        }
+
+        if (featureSettings.autoplay) {
+          mainAutoplay = createAutoplay(carousel, carouselEl, { interval: 3500, pauseOnHover: true, pauseOnInteraction: true });
+          mainAutoplay.start();
+        }
+
+        unsubscribeMain = carousel.subscribe(renderMainCarousel);
+        renderMainCarousel(carousel.getState());
+      }
 
       document.getElementById('btn-next').addEventListener('click', () => carousel.next());
       document.getElementById('btn-prev').addEventListener('click', () => carousel.prev());
 
-      // Initial render
-      const s0 = carousel.getState();
-      track.style.transform = `translate3d(0, 0, 0)`;
-      updateDots(s0.index);
+      window.addEventListener('resize', () => {
+        renderMainCarousel(carousel.getState());
+      });
+
+      function bindFeatureToggle(el, key, transform = (v) => v) {
+        el.addEventListener('input', (e) => {
+          featureSettings[key] = transform(e.target.type === 'checkbox' ? e.target.checked : e.target.value);
+          if (e.target.id === 'feature-space') {
+            featureSpaceVal.textContent = `${featureSettings.spaceBetween}px`;
+          }
+          setupMainCarousel();
+        });
+      }
+
+      bindFeatureToggle(featureLoop, 'loop');
+      bindFeatureToggle(featureAutoplay, 'autoplay');
+      bindFeatureToggle(featureTouch, 'touch');
+      bindFeatureToggle(featureKeyboard, 'keyboard');
+      bindFeatureToggle(featureA11y, 'a11y');
+      bindFeatureToggle(featureProgress, 'progress');
+      bindFeatureToggle(featureSpv, 'slidesPerView', (v) => Number(v));
+      bindFeatureToggle(featureSpace, 'spaceBetween', (v) => Number(v));
+
+      featureSpaceVal.textContent = `${featureSettings.spaceBetween}px`;
+      setupMainCarousel();
 
       // ── Single range ─────────────────────────────────────────────
       const single = createSingleRange({ min: 0, max: 100, step: 5, initialValue: 50 });
@@ -1087,6 +1324,15 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
 
       // ── Web Component demo ───────────────────────────────────────
       const wcCarousel = document.getElementById('wc-carousel');
+      const wcFeatureLoop = document.getElementById('wc-feature-loop');
+      const wcFeatureTouch = document.getElementById('wc-feature-touch');
+      const wcFeatureKeyboard = document.getElementById('wc-feature-keyboard');
+      const wcFeatureAutoplay = document.getElementById('wc-feature-autoplay');
+
+      let wcUnsub = () => { };
+      let wcDestroyTouch = () => { };
+      let wcDestroyKeyboard = () => { };
+      let wcAutoplay = null;
 
       const updateWcDots = buildDots('wc-dots', 3, () => wcCarousel.controller.getState().index, (i) => {
         wcCarousel.controller.goTo(i);
@@ -1094,16 +1340,54 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
         updateWcDots(wcCarousel.controller.getState().index);
       });
 
-      // Subscribe to WC controller changes (touch/keyboard)
-      setTimeout(() => {
-        if (wcCarousel.controller?.subscribe) {
-          wcCarousel.controller.subscribe((state) => {
-            wcCarousel.render();
-            updateWcDots(state.index);
-          });
-          createTouchHandler(wcCarousel, wcCarousel.controller);
+      function destroyWcEnhancers() {
+        wcUnsub();
+        wcUnsub = () => { };
+        wcDestroyTouch();
+        wcDestroyTouch = () => { };
+        wcDestroyKeyboard();
+        wcDestroyKeyboard = () => { };
+        wcAutoplay?.destroy?.();
+        wcAutoplay = null;
+      }
+
+      function setupWcEnhancers() {
+        if (!wcCarousel.controller) return;
+        destroyWcEnhancers();
+
+        wcUnsub = wcCarousel.controller.subscribe((state) => {
+          wcCarousel.render();
+          updateWcDots(state.index);
+        });
+
+        if (wcFeatureTouch.checked) {
+          const touch = createTouchHandler(wcCarousel, wcCarousel.controller);
+          wcDestroyTouch = () => touch.destroy();
         }
-      }, 100);
+
+        if (wcFeatureKeyboard.checked) {
+          wcCarousel.setAttribute('tabindex', '0');
+          const keyboard = createKeyboardHandler(wcCarousel, wcCarousel.controller);
+          wcDestroyKeyboard = () => keyboard.destroy();
+        }
+
+        if (wcFeatureAutoplay.checked) {
+          wcAutoplay = createAutoplay(wcCarousel.controller, wcCarousel, { interval: 3000, pauseOnHover: true, pauseOnInteraction: true });
+          wcAutoplay.start();
+        }
+
+        updateWcDots(wcCarousel.controller.getState().index);
+      }
+
+      wcCarousel.addEventListener('open-slider:ready', setupWcEnhancers);
+
+      [wcFeatureTouch, wcFeatureKeyboard, wcFeatureAutoplay].forEach((el) => {
+        el.addEventListener('input', setupWcEnhancers);
+      });
+
+      wcFeatureLoop.addEventListener('input', () => {
+        wcCarousel.setLoop(wcFeatureLoop.checked);
+      });
 
       document.getElementById('wc-prev').addEventListener('click', () => {
         wcCarousel.prev();
@@ -1112,6 +1396,10 @@ console.<span style="color:#d2a8ff">log</span>(range.<span style="color:#d2a8ff"
       document.getElementById('wc-next').addEventListener('click', () => {
         wcCarousel.next();
         updateWcDots(wcCarousel.controller.getState().index);
+      });
+
+      queueMicrotask(() => {
+        if (wcCarousel.controller) setupWcEnhancers();
       });
 
       // ── Theme playground ─────────────────────────────────────────
