@@ -7,12 +7,12 @@ export interface CarouselController {
   getState(): CarouselState;
 }
 
-function computeState(index: number, totalSlides: number): CarouselState {
+function computeState(index: number, totalSlides: number, loop: boolean): CarouselState {
   return {
     index,
     totalSlides,
-    canNext: index < totalSlides - 1,
-    canPrev: index > 0
+    canNext: loop || index < totalSlides - 1,
+    canPrev: loop || index > 0
   };
 }
 
@@ -28,7 +28,7 @@ export function createCarousel(options: CarouselOptions): CarouselController {
       } else if (loop) {
         index = 0;
       }
-      return computeState(index, totalSlides);
+      return computeState(index, totalSlides, loop);
     },
     prev() {
       if (index > 0) {
@@ -36,7 +36,7 @@ export function createCarousel(options: CarouselOptions): CarouselController {
       } else if (loop) {
         index = totalSlides - 1;
       }
-      return computeState(index, totalSlides);
+      return computeState(index, totalSlides, loop);
     },
     goTo(nextIndex: number) {
       if (loop) {
@@ -45,10 +45,10 @@ export function createCarousel(options: CarouselOptions): CarouselController {
       } else {
         index = Math.min(Math.max(nextIndex, 0), totalSlides - 1);
       }
-      return computeState(index, totalSlides);
+      return computeState(index, totalSlides, loop);
     },
     getState() {
-      return computeState(index, totalSlides);
+      return computeState(index, totalSlides, loop);
     }
   };
 }

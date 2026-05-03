@@ -3,7 +3,19 @@ import { createCarousel } from '@open-slider/core';
 export class OpenSliderCarouselElement extends HTMLElement {
   private controller = createCarousel({ totalSlides: 1 });
 
+  static get observedAttributes(): string[] {
+    return ['loop'];
+  }
+
   connectedCallback(): void {
+    this.initController();
+  }
+
+  attributeChangedCallback(): void {
+    this.initController();
+  }
+
+  private initController(): void {
     const slides = this.querySelectorAll('[data-slide]').length || 1;
     const loop = this.hasAttribute('loop');
     this.controller = createCarousel({ totalSlides: slides, loop });
