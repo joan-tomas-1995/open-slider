@@ -15,7 +15,8 @@
     "version-packages": "changeset version",
     "release": "changeset publish",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "release:check": "node scripts/release-check.mjs"
   },
   "devDependencies": {
     "@angular/core": "^18.0.0",
